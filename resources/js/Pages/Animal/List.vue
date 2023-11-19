@@ -3,12 +3,16 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { defineComponent } from 'vue';
 import {Link} from "@inertiajs/vue3";
 
+
 export default defineComponent({
     components: {
         AppLayout,
         Link,
     },
     props: {
+        error: {
+            type: Number,
+        },
         filteredAnimals: {
             type: Array,
         },
@@ -27,6 +31,7 @@ export default defineComponent({
     },
     data() {
         return {
+            filteredAnimalss: [],
             isFilterApplied: true,
             selectedType: 'Вид животного',
             selectedRegion: 'Область',
@@ -52,7 +57,8 @@ export default defineComponent({
 
             try {
                 const response = await axios.post('/animals/filter', formData);
-            } catch (error) {
+                this.filteredAnimalss = response.data.filteredAnimals; // Update filteredAnimals
+             } catch (error) {
                 console.error(error);
             }
         }
@@ -106,28 +112,32 @@ export default defineComponent({
             <div class="py-12 h-[1714px] w-[1280px]">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-                        <div v-for="animal in animals" :key="animal.id" class="fade card border border-gray-300 rounded-md shadow-md overflow-hidden">
-                            <div class="card-image">
-                                <img :src="`storage/` + animal.image" alt="Animal Image" class="w-full h-64 object-cover">
+                        <template v-if="filteredAnimalss">
+                            <div v-for="animal in filteredAnimalss" :key="animal.id" class="card border border-gray-300 rounded-md shadow-md overflow-hidden">
+                                <div class="card-image">
+                                    <img :src="`/storage/` + animal.image" alt="Animal Image" class="w-full h-64 object-cover">
+                                </div>
+                                <div class="card-content p-4">
+                                    <h3 class="text-lg font-semibold">{{ animal.type }} - {{ animal.breed }}</h3>
+                                    <p class="text-gray-600">{{ animal.gender }}, Дата рождения: {{ animal.date_of_birth }}</p>
+                                    <p class="text-gray-700 mt-2">{{ animal.note }}</p>
+                                    <Link :href="route('animal.show',[animal.id])" class="mt-4 text-blue-500 hover:underline">Подробнее</Link>
+                                </div>
                             </div>
-                            <div class="card-content p-4">
-                                <h3 class="text-lg font-semibold">{{ animal.type }} - {{ animal.breed }}</h3>
-                                <p class="text-gray-600">{{ animal.gender }}, Дата рождения: {{ animal.date_of_birth }}</p>
-                                <p class="text-gray-700 mt-2">{{ animal.note }}</p>
-                                <Link :href="route('animal.show',[animal.id])" class="mt-4 text-blue-500 hover:underline">Подробнее</Link>
+                        </template>
+                        <template v-else-if="!filteredAnimalss">
+                            <div v-for="animal in animals" :key="animal.id" class="fade card border border-gray-300 rounded-md shadow-md overflow-hidden">
+                                <div class="card-image">
+                                    <img :src="`storage/` + animal.image" alt="Animal Image" class="w-full h-64 object-cover">
+                                </div>
+                                <div class="card-content p-4">
+                                    <h3 class="text-lg font-semibold">{{ animal.type }} - {{ animal.breed }}</h3>
+                                    <p class="text-gray-600">{{ animal.gender }}, Дата рождения: {{ animal.date_of_birth }}</p>
+                                    <p class="text-gray-700 mt-2">{{ animal.note }}</p>
+                                    <Link :href="route('animal.show',[animal.id])" class="mt-4 text-blue-500 hover:underline">Подробнее</Link>
+                                </div>
                             </div>
-                        </div>
-                        <div v-for="animal in filteredAnimals" :key="animal.id" class="card border border-gray-300 rounded-md shadow-md overflow-hidden">
-                            <div class="card-image">
-                                <img :src="`/storage/` + animal.image" alt="Animal Image" class="w-full h-64 object-cover">
-                            </div>
-                            <div class="card-content p-4">
-                                <h3 class="text-lg font-semibold">{{ animal.type }} - {{ animal.breed }}</h3>
-                                <p class="text-gray-600">{{ animal.gender }}, Дата рождения: {{ animal.date_of_birth }}</p>
-                                <p class="text-gray-700 mt-2">{{ animal.note }}</p>
-                                <Link :href="route('animal.show',[animal.id])" class="mt-4 text-blue-500 hover:underline">Подробнее</Link>
-                            </div>
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>

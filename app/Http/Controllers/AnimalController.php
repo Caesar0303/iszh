@@ -88,7 +88,6 @@ class AnimalController extends Controller
 
     public function filter(Request $request)
     {
-        dd($request);
         $query = Animal::query();
 
         if (is_numeric($request->type)) {
@@ -112,8 +111,9 @@ class AnimalController extends Controller
         $types = AnimalType::all();
         $regions = Region::all();
         $cities = City::all();
-
-        return Inertia::render('Animal/List', [
+        $error = 1;
+        return response()->json([
+            'error' => $error,
             'filteredAnimals' => $animals,
             'types' => $types,
             'regions' => $regions,
