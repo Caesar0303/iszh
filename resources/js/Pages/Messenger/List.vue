@@ -24,12 +24,34 @@ export default defineComponent({
     data() {
         return {
             newMessage: '',
+            localMessages: this.messages,
         };
     },
     methods: {
         async sendMessage() {
-            const response = await axios.post('send_message_to/')
+            const response = await axios.post(`/send_message_to/${this.receiver.id}`, {
+                newmessage: this.newMessage
+            });
+            this.localMessages = response.data
+            console.log(response.data);
+            this.newMessage = " ";
+        },
+
+        formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${day}.${month}.${year} ${hours}:${minutes}`;
         }
+    },
+    mounted() {
+        console.log('Component mounted');
+        console.log('Messages:', this.messages);
+        console.log('Receiver:', this.receiver);
+        console.log('Sender ID:', this.sender_id);
     }
 })
 </script>
@@ -57,12 +79,14 @@ export default defineComponent({
                             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Чат c {{receiver.name}}</h2>
                             <button @click="openChat" class="text-blue-500 hover:text-blue-600">Закрыть</button>
                         </div>
-                        <div v-for="(message, index) in messages" :key="index" class="flex mb-2">
-                            <div v-if="message.sender_id === sender_id" class="bg-blue-500 text-white rounded p-2 ml-auto">
-                                {{ message.text }}
-                            </div>
-                            <div v-else class="bg-gray-200 text-gray-800 rounded p-2 mr-auto">
-                                {{ message.text }}
+                        <div v-for="(message, index) in localMessages" :key="index" class="flex flex-col mb-2">
+                            <div :class="{'bg-blue-500 text-white rounded p-2 ml-auto': message.sender_id === sender_id, 'bg-gray-500 text-white rounded p-2 mr-auto': message.sender_id !== sender_id}" style="max-width: 70%;">
+                                <div :class="{'text-right': message.sender_id === sender_id, 'text-left': message.sender_id !== sender_id}">
+                                    {{ message.text }}
+                                    <span class="block text-xs text-gray-300">
+                                        {{ formatDate(message.created_at) }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         <input v-model="newMessage" @keydown.enter="sendMessage" placeholder="Введите сообщение..." class="border border-gray-300 rounded p-2 mt-4">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Animal;
 use App\Models\AnimalType;
 use App\Models\City;
+use App\Models\Message;
 use App\Models\Region;
 use App\Models\User;
 use Carbon\Carbon;
@@ -18,50 +19,139 @@ use Kreait\Firebase\ServiceAccount;
 
 class AnimalController extends Controller
 {
+    public function mypage()
+    {
+        $user_id = Auth::id();
+        $user = User::find($user_id);
+        $animals = Animal::where('owner_id', $user_id)->get();
+        return Inertia::render('Profile/MyPage', ['user' => $user, 'animals' => $animals]);
+    }
+
     public function index() {
+        $user_id = Auth::id();
         $animals = Animal::all();
         $types = AnimalType::all();
         $regions = Region::all();
         $cities = City::all();
 
-        $factory = (new Factory)
-            ->withServiceAccount('D:/Programs/Firebase/thediplomaproject-3c9f0-firebase-adminsdk-wic6m-7e0972aeb6.json')
-            ->withDatabaseUri('https://thediplomaproject-3c9f0-default-rtdb.firebaseio.com/');
+        $data = $this->getData();
 
-        $database = $factory->createDatabase();
-
-        $data = $database->getReference('Information')->getValue();
+        $mergedData = [];
 
         foreach ($data as $key => $value) {
             $decodedImg = base64_decode($value['Img']);
             $imgPath = storage_path('app/public/AnimalPictures/' . $key . '.jpg');
-
             file_put_contents($imgPath, $decodedImg);
+
+            $mergedData[] = [
+                'id' => $value['Theid'],
+                'owner' => $value['Owner'],
+                'location' => $value['location'],
+                'type' => $value['thetype'],
+                'breed' => $value['Poroda'],
+                'image' => 'AnimalPictures/' . $key . '.jpg',
+                'gender' => $value['pol'],
+                'date_of_birth' => $value['Birthdate'],
+                'direction' => $value['napr'],
+                'reason_for_staging' => $value['prichpost'],
+                'date_for_registration' => $value['datapost'],
+                'identification_method' => $value['metidentif'],
+                'note' => $value['Note'],
+            ];
         }
 
+        foreach ($animals as $animal) {
+            $mergedData[] = [
+                'id' => $animal->id,
+                'owner' => $animal->owner_id,
+                'location' => $animal->region,
+                'type' => $animal->type,
+                'breed' => $animal->breed,
+                'image' => $animal->image,
+                'gender' => $animal->gender,
+                'date_of_birth' => $animal->date_of_birth,
+                'direction' => $animal->direction,
+                'reason_for_staging' => $animal->reason_for_staging,
+                'date_for_registration' => $animal->date_for_registration,
+                'identification_method' => $animal->identification_method,
+                'note' => $animal->note,
+            ];
+        }
 
-        return Inertia::render('Animal/List', ['data' => $data,'animals' => $animals, 'types' => $types, 'regions' => $regions, 'cities' => $cities]);
+        $unchecked_messages_count = Message::where('receiver_id', $user_id)
+            ->where('read', 0)
+            ->count();
+
+        return Inertia::render('Dashboard', [
+            'data' => $mergedData,
+            'animals' => $animals,
+            'types' => $types,
+            'regions' => $regions,
+            'cities' => $cities,
+        ]);
     }
 
+    public function getData()
+    {
+        $factory = (new Factory)
+            ->withServiceAccount('G:\Programs\Firebase\thediplomaproject-3c9f0-firebase-adminsdk-wic6m-7e0972aeb6.json')
+            ->withDatabaseUri('https://thediplomaproject-3c9f0-default-rtdb.firebaseio.com/');
+
+        $database = $factory->createDatabase();
+
+        return $database->getReference('Information')->getValue();
+    }
 
     public function show($id) {
         $animal = Animal::find($id);
-        $user = User::find($animal->owner_id);
-        $region = Region::find($animal->region);
-        $city = City::find($animal->city);
-        $type = AnimalType::find($animal->type);
-        $created_at = date('Y-m-d', strtotime($animal->created_at));
-        $owner_created_at = date('Y-m-d', strtotime($user->created_at));
 
-        $animalData = [
-            'owner_id' => $user->id,
-            'owner' => $user->name,
-            'owner_date_registration' => $owner_created_at,
-            'city' => $city->name,
-            'region' => $region->name,
-            'type' => $type->name,
-            'created_at' => $created_at
-        ];
+        if ($animal) {
+            $user = User::find($animal->owner_id);
+            $region = Region::find($animal->region);
+            $city = City::find($animal->city);
+            $type = AnimalType::find($animal->type);
+            $created_at = date('Y-m-d', strtotime($animal->created_at));
+            $owner_created_at = date('Y-m-d', strtotime($user->created_at));
+
+            $animalData = [
+                'owner_id' => $user->id,
+                'owner' => $user->name,
+                'owner_date_registration' => $owner_created_at,
+                'city' => $city->name,
+                'region' => $region->name,
+                'type' => $type->name,
+                'created_at' => $created_at,
+                'image' => $animal->image,
+            ];
+        } else {
+            $data = $this->getData();
+
+            if (isset($data[$id])) {
+                $value = $data[$id];
+
+                $decodedImg = base64_decode($value['Img']);
+                $imgPath = storage_path('app/public/AnimalPictures/' . $id . '.jpg');
+                file_put_contents($imgPath, $decodedImg);
+
+                $animalData = [
+                    'id' => $value['Theid'],
+                    'owner' => $value['Owner'],
+                    'location' => $value['location'],
+                    'type' => $value['thetype'],
+                    'breed' => $value['Poroda'],
+                    'image' => 'AnimalPictures/' . $id . '.jpg',
+                    'gender' => $value['pol'],
+                    'date_of_birth' => $value['Birthdate'],
+                    'direction' => $value['napr'],
+                    'reason_for_staging' => $value['prichpost'],
+                    'date_for_registration' => $value['datapost'],
+                    'identification_method' => $value['metidentif'],
+                    'note' => $value['Note'],
+                ];
+            } else {
+                return response()->json(['message' => 'Animal not found'], 404);
+            }
+        }
 
         return Inertia::render('Animal/Show', ['animal' => $animal, 'animalData' => $animalData]);
     }
