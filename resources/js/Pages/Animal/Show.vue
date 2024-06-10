@@ -57,8 +57,8 @@ export default defineComponent({
                             <p class="text-xl font-semibold">Продавец</p>
                             <br>
                             <p class="mb-1">{{ animalData.owner }}</p>
-                            <p class="mb-1"><a :href="'/send_message/' + animalData.owner_id">Отправить сообщение</a></p>
                             <p>На сайте с {{ animalData.owner_date_registration }}</p>
+                            <p class="text-white bg-indigo-500 px-6 py-2 rounded hover:bg-indigo-600"><a :href="'/send_message/' + animalData.owner_id">Отправить сообщение</a></p>
                         </div>
                     </div>
                 </div>

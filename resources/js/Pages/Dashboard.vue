@@ -88,7 +88,6 @@
                                     <p class="text-gray-700 mt-2">{{ animal.note }}</p>
                                     <div class="flex justify-between">
                                         <Link :href="route('animal.show',[animal.id])" class="mt-4 text-blue-500 hover:underline">Подробнее</Link>
-                                        <Link :href="route('animal.delete',[animal.id])" class="mt-4 text-red-500 hover:underline">Удалить</Link>
                                     </div>
                                 </div>
                             </div>
@@ -106,7 +105,6 @@
                                     <p class="text-gray-700 mt-2">{{ animal.note }}</p>
                                     <div class="flex justify-between">
                                         <Link :href="route('animal.show',[animal.id])" class="mt-4 text-blue-500 hover:underline">Подробнее</Link>
-                                        <Link :href="route('animal.delete',[animal.id])" class="mt-4 text-red-500 hover:underline">Удалить</Link>
                                     </div>
                                 </div>
                             </div>
@@ -146,7 +144,7 @@
                 <path d="M13 1H3A2.568 2.568 0 0 0 .5 3.625V10A2.568 2.568 0 0 0 3 12.625h6.723a.46.46 0 0 1 .246.073l3.248 2.071a1.437 1.437 0 0 0 1.481.05 1.568 1.568 0 0 0 .802-1.383V3.625A2.568 2.568 0 0 0 13 1zm1.5 12.436a.561.561 0 0 1-.283.506.44.44 0 0 1-.463-.016l-3.248-2.071a1.454 1.454 0 0 0-.783-.23H3A1.568 1.568 0 0 1 1.5 10V3.625A1.568 1.568 0 0 1 3 2h10a1.568 1.568 0 0 1 1.5 1.625z" fill="#000000" opacity="1" data-original="#000000"></path>
                 <path d="M11 7.5H5a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zM11 4.5H5a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1z" fill="#000000" opacity="1" data-original="#000000"></path>
             </g>
-        </svg>
+                </svg>
                 <span class="no-unchecked" :class="{ 'unchecked-messages': unchecked_messages_count > 0 }">{{unchecked_messages_count}}</span>
             </button>
         </div>
@@ -157,7 +155,6 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { defineComponent } from 'vue'
 import { Carousel, Pagination, Slide } from 'vue3-carousel'
-
 import 'vue3-carousel/dist/carousel.css'
 import {Link} from "@inertiajs/vue3";
 import axios from "axios";

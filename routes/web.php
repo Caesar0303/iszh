@@ -44,3 +44,8 @@ Route::middleware([
     Route::get('/dashboard', [\App\Http\Controllers\AnimalController::class,'index'])
     ->name('dashboard');
 });
+
+
+Route::group(['prefix' => 'admin'], function () {
+    Voyager::routes();
+});
