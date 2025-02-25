@@ -59,36 +59,8 @@ class AnimalController extends Controller
                 'note' => $value['Note'],
             ];
         }
+        return Inertia::render('Animal/List', ['data' => $data,'animals' => $animals, 'types' => $types, 'regions' => $regions, 'cities' => $cities]);
 
-        foreach ($animals as $animal) {
-            $mergedData[] = [
-                'id' => $animal->id,
-                'owner' => $animal->owner_id,
-                'location' => $animal->region,
-                'type' => $animal->type,
-                'breed' => $animal->breed,
-                'image' => $animal->image,
-                'gender' => $animal->gender,
-                'date_of_birth' => $animal->date_of_birth,
-                'direction' => $animal->direction,
-                'reason_for_staging' => $animal->reason_for_staging,
-                'date_for_registration' => $animal->date_for_registration,
-                'identification_method' => $animal->identification_method,
-                'note' => $animal->note,
-            ];
-        }
-
-        $unchecked_messages_count = Message::where('receiver_id', $user_id)
-            ->where('read', 0)
-            ->count();
-
-        return Inertia::render('Dashboard', [
-            'data' => $mergedData,
-            'animals' => $animals,
-            'types' => $types,
-            'regions' => $regions,
-            'cities' => $cities,
-        ]);
     }
 
     public function getData()
