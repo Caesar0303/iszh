@@ -39,7 +39,6 @@ class AnimalController extends Controller
             file_put_contents($imgPath, $decodedImg);
         }
 
-
         return Inertia::render('Animal/List', ['data' => $data,'animals' => $animals, 'types' => $types, 'regions' => $regions, 'cities' => $cities]);
     }
 
