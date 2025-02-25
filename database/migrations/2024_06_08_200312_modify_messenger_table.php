@@ -13,11 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cities', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('region_id');
-            $table->string('name');
-            $table->timestamps();
+        Schema::table('messages', function (Blueprint $table) {
+            $table->integer('read')->default(0);
         });
     }
 
@@ -28,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cities');
+        Schema::table('messages', function (Blueprint $table) {
+            $table->dropColumn('read');
+        });
     }
 };

@@ -34,7 +34,7 @@ const submit = () => {
 
     <AuthenticationCard>
         <template #logo>
-            <AuthenticationCardLogo />
+            <img src="/Logo/image-removebg-preview.png" width="120px" height="120px" alt="Image Preview">
         </template>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">

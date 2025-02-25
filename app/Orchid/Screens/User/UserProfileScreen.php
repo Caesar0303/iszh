@@ -70,8 +70,8 @@ class UserProfileScreen extends Screen
     {
         return [
             Layout::block(UserEditLayout::class)
-                ->title(__('Profile Information'))
-                ->description(__("Update your account's profile information and email address."))
+                ->title(__('Информация о профиле'))
+                ->description(__("Обновите данные пользователя"))
                 ->commands(
                     Button::make(__('Save'))
                         ->type(Color::DEFAULT())
@@ -80,7 +80,7 @@ class UserProfileScreen extends Screen
                 ),
 
             Layout::block(ProfilePasswordLayout::class)
-                ->title(__('Update Password'))
+                ->title(__('Обновите пароль'))
                 ->description(__('Ensure your account is using a long, random password to stay secure.'))
                 ->commands(
                     Button::make(__('Update password'))

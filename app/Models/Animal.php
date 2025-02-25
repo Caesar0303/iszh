@@ -24,5 +24,25 @@ class Animal extends Model
         'price'
     ];
 
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function region()
+    {
+        return $this->belongsTo(Region::class);
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+
+    public function type()
+    {
+        return $this->belongsTo(AnimalType::class);
+    }
+
     use HasFactory;
 }

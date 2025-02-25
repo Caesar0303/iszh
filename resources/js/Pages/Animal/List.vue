@@ -115,13 +115,6 @@ export default defineComponent({
             <div class="py-12 h-[1714px] w-[1280px]">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-                        <div>
-                            <div v-for="(item, key) in data" :key="key">
-                                <img :src="'/storage/AnimalPictures/' + item.Theid + '.jpg'" alt="Animal Image">
-                                <p>Порода: {{ item.Poroda }}</p>
-                                <p>Идентификатор: {{ item.Theid }}</p>
-                            </div>
-                        </div>
                         <template v-if="filteredAnimalss && filteredAnimalss.length > 0">
                             <div v-for="animal in filteredAnimalss" :key="animal.id" class="card border border-gray-300 rounded-md shadow-md overflow-hidden">
                                 <div class="card-image">
@@ -140,7 +133,7 @@ export default defineComponent({
                             </div>
                         </template>
                         <template v-else>
-                            <div v-for="animal in animals" :key="animal.id" class="fade card border border-gray-300 rounded-md shadow-md overflow-hidden">
+                            <div v-for="animal in data" :key="animal.id" class="fade card border border-gray-300 rounded-md shadow-md overflow-hidden">
                                 <div class="card-image">
                                     <img :src="`storage/` + animal.image" alt="Animal Image" class="w-full h-64 object-cover">
                                 </div>
